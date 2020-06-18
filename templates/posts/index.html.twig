@@ -1,0 +1,17 @@
+{% extends 'base.html.twig' %}
+
+{% block title %} {% endblock %}
+
+{% block body %}
+
+    {% for post in posts %}
+<ul><li>	
+	<p>{{ post.title }} -
+        <a href="{{ path('blog_show', {'id': post.id}) }}"><button class="btn btn-info">
+        	Details</button></a>
+    	<a href="{{ path('blog_post_edit', {'id': post.id}) }}"><button class="btn btn-success">Edit</button></a>
+    	<a href="{{ path('blog_post_delete', {'id': post.id}) }}"><button class="btn btn-danger">Delete</button></a>
+    </p>
+</li></ul>
+    {% endfor %}
+{% endblock %}
