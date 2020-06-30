@@ -4,7 +4,10 @@
 
 {% block body %}
 
+<div class="container-fluid">
+ <p><a href="{{ path('new_blog_post') }}"><button class="btn btn-outline-success mt-2">Create new</button></a></p></div>
     {% for post in posts %}
+
 <ul><li>	
 	<p>{{ post.title }} -
         <a href="{{ path('blog_show', {'id': post.id}) }}"><button class="btn btn-info">
