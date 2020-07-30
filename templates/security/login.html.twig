@@ -3,6 +3,8 @@
 {% block title %}Log in!{% endblock %}
 
 {% block body %}
+<br><a href="{{ path('connect_google_start') }}"><button class="btn btn-primary">Sign in with Google</button></a>
+<a href="{{ path('connect_github_start') }}"><button class="btn btn-dark">Sign in with GitHub</button></a><br>
 <form method="post">
     {% if error %}
         <div class="alert alert-danger">{{ error.messageKey|trans(error.messageData, 'security') }}</div>
@@ -37,9 +39,7 @@
 
     <button class="btn btn-lg btn-primary" type="submit">
         Sign in
-    </button>
-    
-        <a href="{{ path('register') }}"><button class="btn btn-lg btn-info" type="submit">Registration</button></a>
-    
+    </button>  
 </form>
+<br><a href="{{ path('register') }}"><button class="btn btn-md btn-info" type="submit">Registration</button></a>
 {% endblock %}
