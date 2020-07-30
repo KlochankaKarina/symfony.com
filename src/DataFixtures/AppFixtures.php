@@ -7,6 +7,7 @@ use Doctrine\Persistence\ObjectManager;
 use Faker\Factory;
 use Cocur\Slugify\Slugify;
 
+
 class AppFixtures extends Fixture
 {
     private $faker;
