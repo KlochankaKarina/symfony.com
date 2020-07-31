@@ -139,7 +139,7 @@ class Post
         }
 
         return $this;*/
-        $comment->setPost($this);
+       $comment->setPost($this);
 
      if (!$this->comments->contains($comment)) {
           $this->comments->add($comment);

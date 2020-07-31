@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Security;
 
-use App\Entity\UserNet;
-use App\Repository\UserNetRepository;
+use App\Entity\User;
+use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use KnpU\OAuth2ClientBundle\Client\ClientRegistry;
 use KnpU\OAuth2ClientBundle\Client\OAuth2Client;
@@ -31,9 +31,9 @@ class OAuthGoogleAuthenticator extends SocialAuthenticator
      */
     private $em;
     /**
-     * @var UserNetRepository
+     * @var UserRepository
      */
-    private $userNetRepository;
+    private $userRepository;
 /**
      * @var RouterInterface
      */
@@ -41,17 +41,17 @@ class OAuthGoogleAuthenticator extends SocialAuthenticator
     /**
      * @param ClientRegistry $clientRegistry
      * @param EntityManagerInterface $em
-     * @param UserNetRepository $userNetRepository
+     * @param UserRepository $userRepository
      */
     public function __construct(
         ClientRegistry $clientRegistry,
         EntityManagerInterface $em,
-        UserNetRepository $userNetRepository
+        UserRepository $userRepository
     )
     {
         $this->clientRegistry = $clientRegistry;
         $this->em = $em;
-        $this->userNetRepository = $userNetRepository;
+        $this->userRepository = $userRepository;
     }
 
     /**
@@ -103,7 +103,7 @@ class OAuthGoogleAuthenticator extends SocialAuthenticator
         $email = $googleUser->getEmail();
 
         /** @var User $existingUser */
-        $existingUser = $this->userNetRepository
+        $existingUser = $this->userRepository
             ->findOneBy(['clientId' => $googleUser->getId()]);
 
         if ($existingUser) {
@@ -111,11 +111,11 @@ class OAuthGoogleAuthenticator extends SocialAuthenticator
         }
 
         /** @var User $user */
-        $user = $this->userNetRepository
+        $user = $this->userRepository
             ->findOneBy(['email' => $email]);
 
         if (!$user) {
-            $user = UserNet::fromGoogleRequest(
+            $user = User::fromGoogleRequest(
                 $googleUser->getId(),
                 $email,
                 $googleUser->getName()

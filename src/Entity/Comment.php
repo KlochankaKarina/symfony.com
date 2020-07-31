@@ -33,9 +33,10 @@ class Comment
 
     /**
      * @ORM\ManyToOne(targetEntity=User::class, inversedBy="comments")
-     * @ORM\JoinColumn(nullable=false)
+     * @ORM\JoinColumn(nullable=true)
      */
     private $user;
+   
 /**
      * @var DateTimeImmutable
      *
@@ -49,18 +50,22 @@ class Comment
      * @ORM\Column(type="date_immutable")
      */
     private $updatedAt;
-
+/**
+     * @param $user
+    
+     */
     public function __construct()
     {
         $this->createdAt = new DateTimeImmutable();
         $this->updatedAt = new DateTimeImmutable();
-        
+         
     }
 
     /**
      * @param string $content
      * @param User $user
      * @param Post $post
+     
      *
      * @return Comment
      */
@@ -70,7 +75,7 @@ class Comment
         $comment->comment = $content;
         $comment->post = $post;
         $comment->user = $user;
-
+        
         return $comment;
     }
     /**
@@ -114,13 +119,14 @@ public function setComment($comment): self
     {
         return $this->user;
     }
-
+   
     public function setUser(?User $user): self
     {
         $this->user = $user;
 
         return $this;
     }
+    
      
      /**
      * @return Collection|Comment[]

@@ -12,15 +12,23 @@
         'placeholder': 'Your comment here...'} }) }}
          <button type="submit" class="btn btn-primary">Submit</button>
 {{ form_end(form) }}</p>
+
 <hr><p><b>Comments:</b></p>
-    
-      {%  for comment in post.comments %}
+    {%  for comment in post.comments %}
    
      
         {% if comment.comment %}
-        <p class="comment"> <i class="text-muted">
+        <p class="comment"> 
+        {% if comment.user %}
+        <b>{{ comment.user.email }}</b>{% endif %}
+        
+         {% if not comment.user %}
+          <b>Anon</b>{% endif %}
+        <i class="text-muted">
         {{ comment.createdAt|date("Y-m-d") }}</i><br>
-        {{ comment.comment }}</p> 
+        {{ comment.comment }}<br>
+        </p> 
+       
        
          {% endif %}
       
@@ -28,8 +36,11 @@
       {% if post.comments|length < 2 %}  
       <p class="text-muted">Comments not found...</p>
        {% endif %}
+    
+     
 
    </div>
+    
 
    
 {% endblock %}
