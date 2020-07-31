@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Security;
 
-use App\Entity\UserNet;
-use App\Repository\UserNetRepository;
+use App\Entity\User;
+use App\Repository\UserRepository;
 use Doctrine\ORM\NonUniqueResultException;
 use Symfony\Component\Security\Core\Exception\UnsupportedUserException;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -14,16 +14,16 @@ use Symfony\Component\Security\Core\User\UserProviderInterface;
 class UserProvider implements UserProviderInterface
 {
     /**
-     * @var UserNetRepository
+     * @var UserRepository
      */
-    private $userNetRepository;
+    private $userRepository;
 
     /**
-     * @param UserNetRepository $userNetRepository
+     * @param UserRepository $userRepository
      */
-    public function __construct(UserNetRepository $userNetRepository)
+    public function __construct(UserRepository $userRepository)
     {
-        $this->userNetRepository = $userNetRepository;
+        $this->userRepository = $userRepository;
     }
 
     /**
@@ -35,7 +35,7 @@ class UserProvider implements UserProviderInterface
      */
     public function loadUserByUsername($username)
     {
-        return $this->userNetRepository->loadUserByUsername($username);
+        return $this->userRepository->loadUserByUsername($username);
     }
 
     /**
@@ -45,7 +45,7 @@ class UserProvider implements UserProviderInterface
      */
     public function refreshUser(UserInterface $user): UserInterface
     {
-        if (!$user instanceof UserNet) {
+        if (!$user instanceof User) {
             throw  new UnsupportedUserException(
                 sprintf('Instances of "%s" are not supported. ', get_class($user))
             );
@@ -61,6 +61,6 @@ class UserProvider implements UserProviderInterface
      */
     public function supportsClass($class): bool
     {
-        return $class === 'App\Entity\UserNet';
+        return $class === 'App\Entity\User';
     }
 }

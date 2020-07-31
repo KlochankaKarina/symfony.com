@@ -14,12 +14,13 @@ use Symfony\Component\HttpFoundation\Request;
 use Cocur\Slugify\Slugify;
 use App\Form\PostType;
 use App\Form\CommentType;
-
+use Symfony\Component\HttpFoundation\Response;
 class PostsController extends AbstractController
 {
 	/** @var PostRepository $postRepository */
     private $postRepository;
     public $com;
+
     public function __construct(PostRepository $postRepository, CommentRepository $commentRepository)
     {
         $this->postRepository = $postRepository;
@@ -116,17 +117,15 @@ class PostsController extends AbstractController
     public function show(Post $post, Request $request)
     {
             $comment = new Comment();
+            
+           
             $comment->setUser($this->getUser());
            
             $post->addComment($comment);
-
+        
             $form = $this->createForm(CommentType::class, $comment);
 
         $form->handleRequest($request);
-            //$query = $request->query->get('comment');
-        
-        //dd($form);
-            //$comment->setComment($q);
             if ($form->isSubmitted() && $form->isValid()) {
                 $comment=$form->getData();
                 //dd($comment);
@@ -136,10 +135,14 @@ class PostsController extends AbstractController
             $em->flush();
 
                return $this->redirectToRoute('blog_show', ['id' => $post->getId()]);
-           }
+            }
+        
+    
+          
           
         return $this->render('posts/show.html.twig', [
             'post' => $post,
+           
             'form'=>$form->createView()
            
             

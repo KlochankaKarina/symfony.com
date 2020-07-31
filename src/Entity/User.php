@@ -10,15 +10,19 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Validator\Constraints as Assert;
-
+use DateTime;
+use DateTimeInterface;
 /**
  * @ORM\Entity(repositoryClass="App\Repository\UserRepository")
  * @ORM\Table(name="user")
- * @UniqueEntity(fields={"email"}, message="Such accaunt is already exist")
+ 
  */
 class User implements UserInterface
 {
     public const ROLE_USER = 'ROLE_USER';
+     public const GITHUB_OAUTH = 'Github';
+    public const GOOGLE_OAUTH = 'Google';
+    public const ROLE_ADMIN = 'ROLE_ADMIN';
     /**
      * @var int
      *
@@ -27,27 +31,51 @@ class User implements UserInterface
      * @ORM\Column(type="integer")
      */
     private $id;
+/**
+     * @var int
+     *
+     * @ORM\Column(type="string", nullable=true)
+     */
+    private $clientId;
+    /**
+     * @var int
+     *
+     * @ORM\Column(type="string", nullable=true)
+     */
+    private $username;
+    /**
+     * @var string
+     *
+     * @ORM\Column(type="string", nullable=true)
+     */
+    private $oauthType;
+
+    /**
+     * @var DateTimeInterface
+     *
+     * @ORM\Column(type="datetime", nullable=true)
+     */
+    private $lastLogin;
 
     /**
      * @var string
      *
-     * @ORM\Column(type="string")
-     * @Assert\NotBlank()
-     * @Assert\Email()
+     
+     * @ORM\Column(type="string", nullable=true)
      */
     private $email;
 
     /**
      * @var string
      *
-     * @ORM\Column(type="string")
+     * @ORM\Column(type="string", nullable=true)
      */
     private $password;
 
     /**
      * @var string
      *
-     * @Assert\NotBlank()
+     * @ORM\Column(type="string", nullable=true)
      */
     private $plainPassword;
 
@@ -75,16 +103,74 @@ class User implements UserInterface
      * @ORM\OneToMany(targetEntity=Comment::class, mappedBy="user")
      */
     private $comments;
+/**
+     * @param $clientId
+     * @param string $email
+     * @param string $username
+     * @param string $oauthType
+     * @param array $roles
 
-   
+     */
 
-    public function __construct()
+    public function __construct($clientId=null,
+        string $email=null,
+        string $username=null,
+        string $oauthType=null)
     {
         
+        $this->clientId = $clientId;
+        $this->email = $email;
+        $this->username = $username;
+        $this->oauthType = $oauthType;
         $this->roles = [self::ROLE_USER];
         $this->enabled = false;
         $this->comments = new ArrayCollection();
-        
+        $this->lastLogin = new DateTime('now');
+    }
+
+   
+/**
+     * @param int $clientId
+     * @param string $email
+     * @param string $username
+     *
+     * @return User
+     */
+    public static function fromGithubRequest(
+        int $clientId,
+        string $email,
+        string $username
+    ): User
+    {
+        return new self(
+            $clientId,
+            $email,
+            $username,
+            self::GITHUB_OAUTH,
+            [self::ROLE_USER]
+        );
+    }
+
+    /**
+     * @param string $clientId
+     * @param string $email
+     * @param string $username
+     *
+     * @return User
+     */
+    public static function fromGoogleRequest(
+        string $clientId,
+        string $email,
+        string $username
+    ): User
+    {
+        return new self(
+            $clientId,
+            $email,
+            $username,
+            self::GOOGLE_OAUTH,
+            [self::ROLE_USER]
+        );
     }
 
     /**
@@ -112,7 +198,7 @@ class User implements UserInterface
     /**
      * @return string
      */
-    public function getPassword(): string
+    public function getPassword(): ?string
     {
         return $this->password;
     }
@@ -140,7 +226,7 @@ class User implements UserInterface
     /**
      * @return string
      */
-    public function getUsername(): string
+    public function getUsername(): ?string
     {
         return $this->email;
     }
@@ -153,7 +239,7 @@ class User implements UserInterface
     /**
      * @return string
      */
-    public function getEmail()
+    public function getEmail(): ?string
     {
         return $this->email;
     }
@@ -177,7 +263,28 @@ class User implements UserInterface
     {
         return $this->id;
     }
+/**
+     * @return int
+     */
+    public function getClientId(): int
+    {
+        return $this->clientId;
+    }
+    /**
+     * @return string
+     */
+    public function getOauthType(): string
+    {
+        return $this->oauthType;
+    }
 
+    /**
+     * @return DateTimeInterface
+     */
+    public function getLastLogin(): DateTimeInterface
+    {
+        return $this->lastLogin;
+    }
     /**
      * @return string
      */

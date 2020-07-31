@@ -9,13 +9,13 @@ security:
                 class: App\Entity\User
                 
                 property: email
-        net_user:
-            entity:
-                class: App\Entity\UserNet
-                property: email
-        chain_provider:
-            chain:
-                providers: [database_users, net_user]
+        #net_user:
+        #    entity:
+        #        class: App\Entity\UserNet
+        #        property: email
+        #chain_provider:
+        #    chain:
+        #        providers: [database_users, net_user]
     firewalls:
         dev:
             pattern: ^/(_(profiler|wdt)|css|images|js)/

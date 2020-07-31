@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace App\Security;
 
 use App\Event\CreatedUserEvent;
-use App\Entity\UserNet;
-use App\Repository\UserNetRepository;
+use App\Entity\User;
+use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Exception;
 use KnpU\OAuth2ClientBundle\Client\ClientRegistry;
@@ -37,9 +37,9 @@ final class OAuthGithubAuthenticator extends SocialAuthenticator
     private $em;
 
     /**
-     * @var UserNetRepository
+     * @var UserRepository
      */
-    private $userNetRepository;
+    private $userRepository;
 
     /**
      * @var RouterInterface
@@ -54,20 +54,20 @@ final class OAuthGithubAuthenticator extends SocialAuthenticator
     /**
      * @param ClientRegistry $clientRegistry
      * @param EntityManagerInterface $em
-     * @param UserNetRepository $userNetRepository
+     * @param UserRepository $userRepository
      * @param RouterInterface $router
      * @param EventDispatcherInterface $eventDispatcher
      */
     public function __construct(
         ClientRegistry $clientRegistry,
         EntityManagerInterface $em,
-        UserNetRepository $userNetRepository,
+        UserRepository $userRepository,
         RouterInterface $router,
         EventDispatcherInterface $eventDispatcher
     ) {
         $this->clientRegistry = $clientRegistry;
         $this->em = $em;
-        $this->userNetRepository = $userNetRepository;
+        $this->userRepository = $userRepository;
         $this->router = $router;
         $this->eventDispatcher = $eventDispatcher;
     }
@@ -123,7 +123,7 @@ final class OAuthGithubAuthenticator extends SocialAuthenticator
         $clientId = $githubUser->getId();
 
         /** @var User $existingUser */
-        $existingUser = $this->userNetRepository
+        $existingUser = $this->userRepository
             ->findOneBy(['clientId' => $clientId]);
 
         if ($existingUser) {
@@ -132,7 +132,7 @@ final class OAuthGithubAuthenticator extends SocialAuthenticator
  
         $githubUserData = $githubUser->toArray();
 
-        $user = UserNet::fromGithubRequest(
+        $user = User::fromGithubRequest(
            (int) $clientId,
             $githubUserData['email'] ?? $githubUserData['login'],
             (string) $githubUserData['name']
